@@ -271,7 +271,7 @@ function msg(html, who, isNew){
 function render(){
   const log = document.getElementById('chatLog');
   const ctrl = document.getElementById('controls');
-  let html = msg("Hi, I'm the SCHO Coverage Navigator. I'll ask a few quick questions and suggest the kind of health coverage you may qualify for &mdash; like Medi-Cal, a Covered California plan, or Medicare &mdash; and how to sign up.<span class='hint'>This is an estimate, not an official decision. Your answers stay on your device.</span>", 'bot', history.length===0);
+  let html = msg("Hello, I'm the SCHO Coverage Navigator! I'll ask a few quick questions and suggest the kind of health coverage you may qualify for (Medi-Cal, a Covered California plan, or Medicare) and how to sign up.<span class='hint'>This is an estimate, not an official decision. Your answers stay on your device.</span>", 'bot', history.length===0);
   history.forEach(id=>{
     const q = QUESTIONS.find(x=>x.id===id);
     const label = q.options ? q.options.find(o=>o[0]===answers[id])[1] : q.answer(answers[id], answers);
