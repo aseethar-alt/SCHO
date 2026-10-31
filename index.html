@@ -2,490 +2,624 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SCHO Coverage Navigator</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap');
+@font-face{ font-family:'Alpino'; src:url(fonts/Alpino-Bold.woff2) format('woff2'); font-weight:700; font-style:normal; font-display:swap; }
+@font-face{ font-family:'Pally'; src:url(fonts/Pally-Regular.woff2) format('woff2'); font-weight:400; font-style:normal; font-display:swap; }
+@font-face{ font-family:'Pally'; src:url(fonts/Pally-Medium.woff2) format('woff2'); font-weight:500; font-style:normal; font-display:swap; }
+@font-face{ font-family:'Pally'; src:url(fonts/Pally-Bold.woff2) format('woff2'); font-weight:700; font-style:normal; font-display:swap; }
 
+/* Colors match the main SCHO website. */
 :root{
-  --teal-deep:#0F3D3E;
-  --teal-panel:#16524F;
-  --teal-line:#2A6B65;
-  --ivory:#F5F1E8;
-  --ivory-dim:#C9DEDA;
-  --amber:#F2A93B;
-  --amber-dim:#9C7526;
-  --sage:#8FCB9B;
-  --rose:#E0776D;
+  --bg:#FFF9E6;
+  --card:#FFFFFF;
+  --muted:#FBF0D2;
+  --border:#F0DFAE;
+  --ink:#1A1414;
+  --ink-faint:#6B615C;
+  --cardinal:#9D2235;
+  --cardinal-tint:#F7E4E7;
+  --gold:#E8A400;
+  --gold-tint:#FFF3D0;
 }
-*{box-sizing:border-box;}
+*{ box-sizing:border-box; }
+html{ font-size:118.75%; }
 body{
   margin:0;
-  background:var(--teal-deep);
-  color:var(--ivory);
-  font-family:'Work Sans',sans-serif;
-  display:flex;
-  justify-content:center;
-  padding:32px 16px;
-}
-.app{
-  width:100%;
-  max-width:640px;
-}
-.brand{
-  display:flex;
-  align-items:baseline;
-  justify-content:space-between;
-  margin-bottom:22px;
-}
-.brand h1{
-  font-family:'Fraunces',serif;
-  font-weight:600;
-  font-size:26px;
-  margin:0;
-  letter-spacing:0.2px;
-}
-.brand span{
-  font-size:12px;
-  color:var(--ivory-dim);
-  text-transform:uppercase;
-  letter-spacing:1.5px;
-}
-/* trail / step tracker */
-.trail{
-  display:flex;
-  align-items:center;
-  margin-bottom:24px;
-  padding:0 4px;
-}
-.trail-step{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  flex:1;
-  position:relative;
-}
-.trail-dot{
-  width:11px;height:11px;border-radius:50%;
-  background:var(--teal-line);
-  border:2px solid var(--teal-line);
-  z-index:2;
-  transition:all .3s ease;
-}
-.trail-step.active .trail-dot{
-  background:var(--amber);
-  border-color:var(--amber);
-  box-shadow:0 0 0 4px rgba(242,169,59,0.2);
-}
-.trail-step.done .trail-dot{
-  background:var(--sage);
-  border-color:var(--sage);
-}
-.trail-line{
-  position:absolute;
-  top:5px;
-  left:50%;
-  width:100%;
-  height:2px;
-  background:var(--teal-line);
-  z-index:1;
-}
-.trail-step.done .trail-line, .trail-step.active .trail-line{
-  background:var(--sage);
-}
-.trail-step:last-child .trail-line{display:none;}
-.trail-label{
-  font-size:10px;
-  color:var(--ivory-dim);
-  margin-top:6px;
-  text-align:center;
-  letter-spacing:0.3px;
-}
-
-.panel{
-  background:var(--teal-panel);
-  border:1px solid var(--teal-line);
-  border-radius:14px;
-  padding:22px;
-  min-height:420px;
-  display:flex;
-  flex-direction:column;
-}
-.chat-log{
-  flex:1;
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-  margin-bottom:18px;
-}
-.msg{
-  max-width:88%;
-  padding:12px 15px;
-  border-radius:12px;
-  line-height:1.5;
-  font-size:14.5px;
-  animation:fade .35s ease;
-}
-@keyframes fade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
-.msg.bot{
-  background:rgba(245,241,232,0.06);
-  border:1px solid var(--teal-line);
-  align-self:flex-start;
-  border-top-left-radius:2px;
-}
-.msg.user{
-  background:var(--amber);
-  color:#2A1D06;
-  align-self:flex-end;
-  border-top-right-radius:2px;
-  font-weight:500;
-}
-.msg.bot b{color:var(--amber);}
-
-.controls{
-  border-top:1px solid var(--teal-line);
-  padding-top:16px;
-}
-.field-row{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-}
-input[type=number], input[type=text], select{
-  flex:1;
-  min-width:140px;
-  background:var(--teal-deep);
-  border:1px solid var(--teal-line);
-  color:var(--ivory);
-  padding:11px 12px;
-  border-radius:8px;
-  font-size:14.5px;
-  font-family:'Work Sans',sans-serif;
-}
-input:focus, select:focus{outline:2px solid var(--amber);}
-.pill-row{display:flex;flex-wrap:wrap;gap:8px;}
-.pill{
-  background:transparent;
-  border:1px solid var(--teal-line);
-  color:var(--ivory);
-  padding:9px 16px;
-  border-radius:999px;
-  cursor:pointer;
-  font-size:14px;
-  font-family:'Work Sans',sans-serif;
-  transition:all .15s ease;
-}
-.pill:hover{border-color:var(--amber);}
-.pill.selected{background:var(--amber);color:#2A1D06;border-color:var(--amber);font-weight:600;}
-.next-btn{
-  margin-top:12px;
-  width:100%;
-  background:var(--amber);
-  color:#2A1D06;
-  border:none;
-  padding:12px;
-  border-radius:8px;
-  font-size:15px;
-  font-weight:700;
-  font-family:'Work Sans',sans-serif;
-  cursor:pointer;
-}
-.next-btn:disabled{background:var(--teal-line);color:var(--ivory-dim);cursor:not-allowed;}
-.next-btn:hover:not(:disabled){filter:brightness(1.08);}
-
-.result-card{
-  background:rgba(143,203,155,0.08);
-  border:1px solid var(--sage);
-  border-radius:12px;
-  padding:20px;
-}
-.result-card h2{
-  font-family:'Fraunces',serif;
-  font-size:20px;
-  color:var(--sage);
-  margin:0 0 8px;
-}
-.result-fpl{
-  font-size:13px;
-  color:var(--ivory-dim);
-  margin-bottom:14px;
-}
-.result-card p{font-size:14.5px;line-height:1.6;margin:0 0 10px;}
-.disclaimer{
-  font-size:12px;
-  color:var(--ivory-dim);
-  border-top:1px dashed var(--teal-line);
-  padding-top:12px;
-  margin-top:14px;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Pally', ui-sans-serif, system-ui, sans-serif;
   line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  padding:0 clamp(16px, 4vw, 80px) 48px;
 }
-.cta{
-  display:inline-block;
-  margin-top:12px;
-  background:var(--sage);
-  color:#0F3D3E;
-  padding:10px 18px;
-  border-radius:8px;
-  text-decoration:none;
-  font-weight:700;
-  font-size:14px;
+a{ color:inherit; }
+[hidden]{ display:none !important; }
+:focus-visible{ outline:3px solid var(--cardinal); outline-offset:3px; border-radius:4px; }
+.app{ max-width:820px; margin:0 auto; }
+
+/* ===== Header ===== */
+.topbar{ display:flex; align-items:center; justify-content:space-between; gap:16px; padding-block:clamp(10px, 1.6vw, 18px); }
+.brand{ display:flex; flex-direction:column; align-items:center; gap:2px; text-decoration:none; }
+.brand img{ height:clamp(52px, 5vw, 72px); width:auto; display:block; }
+.brand span{ font-weight:700; font-size:clamp(13px, 1.2vw, 17px); line-height:1; color:var(--cardinal); letter-spacing:.12em; padding-left:.12em; }
+.back{ font-weight:700; font-size:.9rem; color:var(--cardinal); text-decoration:none; display:inline-flex; align-items:center; min-height:44px; }
+.back:hover{ text-decoration:underline; text-underline-offset:3px; }
+
+.intro{ margin-top:clamp(12px, 2vw, 28px); }
+.intro h1{ font-family:'Alpino','Pally',sans-serif; font-weight:700; color:var(--cardinal); font-size:clamp(1.9rem, 3.5vw, 3.2rem); line-height:1.1; letter-spacing:-.015em; margin:0; }
+.intro p{ margin:.4em 0 0; font-size:clamp(17px, 1.4vw, 22px); line-height:1.5; }
+
+/* ===== Step tracker ===== */
+.trail{ display:flex; margin:clamp(24px, 3vw, 36px) 0 clamp(18px, 2.4vw, 28px); padding:0; list-style:none; }
+.trail-step{ flex:1; display:flex; flex-direction:column; align-items:center; position:relative; }
+.trail-dot{ width:14px; height:14px; border-radius:50%; background:var(--bg); border:2px solid var(--border); z-index:2; transition:background .3s ease, border-color .3s ease; }
+.trail-line{ position:absolute; top:6px; left:50%; width:100%; height:2px; background:var(--border); z-index:1; }
+.trail-step:last-child .trail-line{ display:none; }
+.trail-step.done .trail-dot{ background:var(--cardinal); border-color:var(--cardinal); }
+.trail-step.done .trail-line{ background:var(--cardinal); }
+.trail-step.active .trail-dot{ background:var(--gold); border-color:var(--gold); }
+.trail-label{ font-size:.72rem; font-weight:700; color:var(--ink-faint); margin-top:6px; text-align:center; letter-spacing:.02em; }
+.trail-step.active .trail-label{ color:var(--cardinal); }
+
+/* ===== Chat ===== */
+.chat-log{ display:flex; flex-direction:column; gap:12px; }
+.msg{ max-width:88%; padding:.75em 1em; border-radius:16px; line-height:1.5; font-size:clamp(16px, 1.15vw, 19px); }
+.msg.new{ animation:fade .35s ease; }
+@keyframes fade{ from{ opacity:0; transform:translateY(4px); } to{ opacity:1; transform:none; } }
+.msg.bot{ background:var(--muted); align-self:flex-start; border-top-left-radius:4px; }
+.msg.user{ background:var(--cardinal); color:#fff; align-self:flex-end; border-top-right-radius:4px; font-weight:500; }
+.msg b{ color:var(--cardinal); }
+.msg .hint{ display:block; margin-top:.35em; font-size:.85em; color:var(--ink-faint); }
+
+.controls{ margin-top:clamp(18px, 2.4vw, 28px); padding-top:clamp(16px, 2vw, 22px); border-top:1px solid var(--border); }
+.controls:empty{ display:none; }
+.q-label{ display:block; font-weight:700; font-size:.92rem; margin:0 0 8px; }
+.field-row{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+.field-row + .pill-row{ margin-top:10px; }
+input[type=number], select{
+  flex:1; min-width:140px;
+  background:var(--card); border:1.5px solid var(--border); color:var(--ink);
+  padding:.85em 1em; border-radius:12px;
+  font-family:'Pally',sans-serif; font-size:1rem;
 }
-.restart{
-  background:none;border:1px solid var(--teal-line);color:var(--ivory-dim);
-  padding:9px 16px;border-radius:8px;font-size:13px;margin-top:10px;cursor:pointer;
-  font-family:'Work Sans',sans-serif;
+input:focus, select:focus{ outline:none; border-color:var(--cardinal); }
+.pill-row{ display:flex; flex-wrap:wrap; gap:10px; }
+.pill{
+  background:transparent; border:2px solid var(--cardinal); color:var(--cardinal);
+  padding:.6em 1.2em; min-height:44px; border-radius:999px; cursor:pointer;
+  font-family:'Pally',sans-serif; font-weight:700; font-size:.92rem; text-align:left;
+  transition:background .15s ease, color .15s ease;
 }
+.pill:hover{ background:var(--cardinal-tint); }
+.pill.selected{ background:var(--cardinal); color:#fff; }
+.pill.sm{ padding:.4em 1em; min-height:40px; font-size:.85rem; }
+.btn{
+  display:flex; justify-content:center; align-items:center; gap:.4em; width:100%;
+  margin-top:16px; padding:1em; border-radius:999px; border:2px solid var(--cardinal);
+  background:var(--cardinal); color:#fff; text-decoration:none; cursor:pointer; text-align:center;
+  font-family:'Pally',sans-serif; font-weight:700; font-size:.95rem;
+  transition:opacity .18s ease, transform .18s ease;
+}
+.btn:hover:not(:disabled){ opacity:.92; transform:translateY(-2px); }
+.btn:disabled{ background:var(--border); border-color:var(--border); color:var(--ink-faint); cursor:not-allowed; }
+.btn.outline{ background:transparent; color:var(--cardinal); }
+.btn.outline:hover{ background:var(--cardinal-tint); }
+.link-btn{ background:none; border:0; padding:0; margin-top:14px; min-height:44px; font-family:'Pally',sans-serif; font-weight:700; font-size:.9rem; color:var(--cardinal); cursor:pointer; }
+.link-btn:hover{ text-decoration:underline; text-underline-offset:3px; }
+
+/* ===== Result ===== */
+.result{ margin-top:clamp(14px, 2vw, 24px); padding-top:clamp(16px, 2vw, 22px); border-top:4px solid var(--cardinal); animation:fade .35s ease; }
+.result.warn{ border-top-color:var(--gold); }
+.result-eyebrow{ font-size:.78rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-faint); }
+.result h2{ font-family:'Alpino','Pally',sans-serif; font-weight:700; color:var(--cardinal); font-size:clamp(1.5rem, 2.6vw, 2.3rem); line-height:1.15; margin:.15em 0 0; }
+.result h3{ font-family:'Alpino','Pally',sans-serif; font-weight:700; color:var(--cardinal); font-size:clamp(1.15rem, 1.8vw, 1.5rem); margin:1.6em 0 .4em; }
+.result-fpl{ font-size:.85rem; font-weight:700; color:var(--ink-faint); margin:.5em 0 1em; }
+.result p, .result li, .facts dd{ font-size:clamp(16px, 1.2vw, 20px); line-height:1.6; }
+.result p{ margin:0 0 .8em; }
+.result b{ color:var(--cardinal); }
+.facts{ margin:0; border-bottom:1px solid var(--border); }
+.facts div{ display:grid; grid-template-columns:150px 1fr; gap:4px 18px; padding:.8em 0; border-top:1px solid var(--border); }
+.facts dt{ font-weight:700; color:var(--cardinal); font-size:.92rem; padding-top:.1em; }
+.facts dd{ margin:0; }
+.result ul{ margin:0; padding-left:1.2em; display:flex; flex-direction:column; gap:.5em; }
+.result li::marker{ color:var(--gold); }
+.extra{ margin-top:1em; }
+.disclaimer{ font-size:.8rem !important; color:var(--ink-faint); border-top:1px solid var(--border); padding-top:14px; margin-top:22px !important; line-height:1.6 !important; }
+.result-actions{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.result-actions .btn:only-child{ grid-column:1 / -1; }
+.result-links{ display:flex; gap:24px; flex-wrap:wrap; }
+@media (max-width: 560px){
+  .result-actions{ grid-template-columns:1fr; gap:0; }
+  .msg{ max-width:94%; }
+  .facts div{ grid-template-columns:1fr; }
+}
+@media (prefers-reduced-motion: reduce){ *{ transition:none !important; animation:none !important; } }
 </style>
 </head>
 <body>
 <div class="app">
-  <div class="brand">
+  <header class="topbar">
+    <a class="brand" href="https://aseethar-alt.github.io/SCHOWEBSITE/">
+      <img src="images/scho-header-emblem.png" alt="Southern California Healthcare Outreach" width="1057" height="1100">
+      <span>SCHO</span>
+    </a>
+    <a class="back" href="https://aseethar-alt.github.io/SCHOWEBSITE/#resources">&larr; Back to SCHO website</a>
+  </header>
+
+  <div class="intro">
     <h1>Coverage Navigator</h1>
-    <span>SCHO &middot; est. 2026 guidelines</span>
+    <p>Answer a few quick questions to see what kind of health coverage you may qualify for and how to sign up.</p>
   </div>
 
-  <div class="trail" id="trail"></div>
+  <ol class="trail" id="trail" aria-label="Progress"></ol>
 
-  <div class="panel">
-    <div class="chat-log" id="chatLog"></div>
+  <main>
+    <div class="chat-log" id="chatLog" aria-live="polite"></div>
     <div class="controls" id="controls"></div>
-  </div>
+  </main>
 </div>
 
 <script>
-const STEPS = ["Household","Income","Location","Health","Result"];
-const state = { size:null, income:null, stateCode:null, age:null, tobacco:null, pregnant:null, coverage:null, priority:null };
-let step = 0;
+/* ==========================================================================
+   SETTINGS: numbers and links that change every year. Check these each fall
+   against Covered California, DHCS (Medi-Cal) and HHS before open enrollment.
+   ========================================================================== */
+const CONFIG = {
+  // The plan year people are signing up for during open enrollment.
+  COVERAGE_YEAR: 2027,
+  // HHS poverty guidelines for household sizes 1-8 (2026, Federal Register Jan 2026).
+  // Medi-Cal uses the current year's guidelines; Covered California financial help
+  // for 2027 uses these same 2026 numbers. Each January, add the new year's table.
+  FPL: [15960,21640,27320,33000,38680,44360,50040,55720],
+  FPL_YEAR: 2026,
+  MEDI_CAL_ADULT: 138,      // % of poverty level
+  MEDI_CAL_CHILD: 266,
+  MEDI_CAL_PREGNANCY: 213,
+  MCAP: 322,
+  CSR_SILVER: 250,          // Cost-Sharing Reductions on Silver plans
+  SUBSIDY_MAX: 400,         // no premium tax credit above this (enhanced help expired after 2025)
+  CA_STATE_HELP: 200,       // California adds its own help at lower incomes; confirm the cutoff on coveredca.com
+  NON_EXPANSION: ["AL","FL","GA","KS","MS","SC","TN","TX","WI","WY"],
+  SCHO_HELP: "https://aseethar-alt.github.io/SCHOWEBSITE/#contact",
+  LINKS: {
+    medical: { label:"Apply at BenefitsCal", url:"https://benefitscal.com/" },
+    coveredca: { label:"Shop at Covered California", url:"https://www.coveredca.com/" },
+    medicare: { label:"Sign up at Social Security", url:"https://www.ssa.gov/medicare" },
+    healthcaregov: { label:"Apply at HealthCare.gov", url:"https://www.healthcare.gov/" }
+  }
+};
 
-const FPL_2026 = [15960,21640,27320,33000,38680,44360,50040,55720];
-const FPL_2025 = [15650,21150,26650,32150,37650,43150,48650,54150];
-const NON_EXPANSION = ["AL","FL","GA","KS","MS","SC","TN","TX","WI","WY"];
-const STATES = ["CA","AL","AK","AZ","AR","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY","DC"];
+const GROUPS = ["Household","Location","About you","Coverage","Result"];
+const OTHER_STATES = ["AL","AK","AZ","AR","CO","CT","DE","DC","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"];
+const BRING = "Photo ID, proof of income (like pay stubs or last year's tax return), proof of your address, and a Social Security number or immigration documents if you have them.";
 
 function fplGuideline(table, size){
   if(size<=8) return table[size-1];
-  const step = table[7]-table[6];
-  return table[7] + step*(size-8);
+  return table[7] + (table[7]-table[6])*(size-8);
+}
+function pct(a, table){ return a.income / fplGuideline(table, a.size) * 100; }
+function isCA(a){ return a.state==='CA'; }
+
+// Would this person's main result be a Covered California / Marketplace plan?
+// Only then do the job-offer and recent-change questions matter.
+function marketplaceBound(a){
+  if(a.age>=65 || a.ssdi==='2plus' || a.immigration==='undoc') return false;
+  const p = pct(a, CONFIG.FPL);
+  if(isCA(a)) return !(a.age<19 && p<=CONFIG.MEDI_CAL_CHILD) && p>CONFIG.MEDI_CAL_ADULT;
+  if(CONFIG.NON_EXPANSION.includes(a.state)) return p>=100;
+  return p>CONFIG.MEDI_CAL_ADULT;
 }
 
-function renderTrail(){
-  const trail = document.getElementById('trail');
-  trail.innerHTML = STEPS.map((label,i)=>{
-    const cls = i<step ? 'done' : (i===step ? 'active' : '');
-    return `<div class="trail-step ${cls}"><div class="trail-line"></div><div class="trail-dot"></div><div class="trail-label">${label}</div></div>`;
+/* ===== Questions, asked in order. `show` skips ones that don't apply. ===== */
+const QUESTIONS = [
+  { id:'size', group:0, type:'number', label:'Household size', placeholder:'e.g. 3', min:1, max:20,
+    ask:()=>"First, how many people are in your household?<span class='hint'>Count yourself plus anyone on your tax return, like a spouse or children.</span>",
+    answer:v=>`Household of ${v}` },
+  { id:'income', group:0, type:'income',
+    ask:()=>"What's your household's total income before taxes?<span class='hint'>Include everyone's wages, self-employment and other income. A best guess is fine.</span>",
+    answer:(v,a)=>`$${a.incomeEntered.toLocaleString()} per ${a.incomePer}` },
+  { id:'state', group:1, type:'state',
+    ask:()=>"Do you live in California?<span class='hint'>Medi-Cal and Covered California are for California residents.</span>",
+    answer:v=>v==='CA' ? 'California' : v },
+  { id:'age', group:2, type:'number', label:'Your age', placeholder:'e.g. 34', min:0, max:120,
+    ask:()=>"How old are you?",
+    answer:v=>`Age ${v}` },
+  { id:'kids', group:2, type:'choice', show:a=>a.size>1,
+    ask:()=>"Does anyone under 19 in your household need coverage?<span class='hint'>Children often qualify for programs at higher incomes than adults.</span>",
+    options:[['yes','Yes'],['no','No']] },
+  { id:'pregnant', group:2, type:'choice',
+    ask:()=>"Is anyone in your household pregnant?",
+    options:[['yes','Yes'],['no','No']] },
+  { id:'ssdi', group:2, type:'choice', show:a=>a.age<65,
+    ask:()=>"Do you get Social Security disability benefits (SSDI)?",
+    options:[['2plus','Yes, for 2 years or more'],['under2','Yes, for less than 2 years'],['no','No']] },
+  { id:'immigration', group:2, type:'choice', show:a=>isCA(a) && a.age<65 && a.ssdi!=='2plus',
+    ask:()=>"Which best describes your immigration status?<span class='hint'>We only ask because it changes which programs you can use. Your answers are not saved or sent anywhere.</span>",
+    options:[['citizen','U.S. citizen or green card'],['other','Another status (refugee, asylee, TPS, DACA, visa, etc.)'],['undoc','Undocumented'],['skip','Prefer not to say']] },
+  { id:'job', group:3, type:'choice', show:marketplaceBound,
+    ask:()=>"Does your job, or a family member's job, offer health insurance you could join?",
+    options:[['yes','Yes'],['no','No'],['unsure',"I'm not sure"]] },
+  { id:'change', group:3, type:'choice', show:marketplaceBound,
+    ask:()=>"In the last 60 days, did you lose health coverage, move, get married, or have or adopt a baby?<span class='hint'>Changes like these let you sign up outside of open enrollment.</span>",
+    options:[['lost','Yes, I lost coverage'],['other','Yes, another change'],['no','No']] },
+  { id:'usc', group:3, type:'choice', show:a=>isCA(a) && a.age>=16 && a.age<40,
+    ask:()=>"Last one: are you a USC student?",
+    options:[['yes','Yes'],['no','No']] }
+];
+
+const answers = {};   // id -> value (plus incomeEntered / incomePer)
+let history = [];     // ids of answered questions, in order
+
+function nextQuestion(){
+  return QUESTIONS.find(q=>!history.includes(q.id) && (!q.show || q.show(answers)));
+}
+
+/* ===== Rendering ===== */
+function renderTrail(group){
+  document.getElementById('trail').innerHTML = GROUPS.map((label,i)=>{
+    const cls = i<group ? 'done' : (i===group ? 'active' : '');
+    return `<li class="trail-step ${cls}"${i===group?' aria-current="step"':''}><div class="trail-line"></div><div class="trail-dot"></div><div class="trail-label">${label}</div></li>`;
   }).join('');
 }
 
-function addMsg(text, who){
+function msg(html, who, isNew){
+  return `<div class="msg ${who}${isNew?' new':''}">${html}</div>`;
+}
+
+function render(){
   const log = document.getElementById('chatLog');
-  const div = document.createElement('div');
-  div.className = 'msg ' + who;
-  div.innerHTML = text;
-  log.appendChild(div);
-  log.scrollTop = log.scrollHeight;
+  const ctrl = document.getElementById('controls');
+  let html = msg("Hi, I'm the SCHO Coverage Navigator. I'll ask a few quick questions and suggest the kind of health coverage you may qualify for &mdash; like Medi-Cal, a Covered California plan, or Medicare &mdash; and how to sign up.<span class='hint'>This is an estimate, not an official decision. Your answers stay on your device.</span>", 'bot', history.length===0);
+  history.forEach(id=>{
+    const q = QUESTIONS.find(x=>x.id===id);
+    const label = q.options ? q.options.find(o=>o[0]===answers[id])[1] : q.answer(answers[id], answers);
+    html += msg(q.ask(answers), 'bot') + msg(label, 'user');
+  });
+  const q = nextQuestion();
+  if(q){
+    html += msg(q.ask(answers), 'bot', true);
+    log.innerHTML = html;
+    renderTrail(q.group);
+    renderControls(q);
+  } else {
+    log.innerHTML = html;
+    renderTrail(4);
+    ctrl.innerHTML = '';
+    log.appendChild(renderResult(answers));
+  }
 }
 
-function clearControls(){ document.getElementById('controls').innerHTML=''; }
-
-function goToStep(n){
-  step = n;
-  renderTrail();
-  document.getElementById('chatLog').innerHTML='';
-  renderStep();
+function backButton(){
+  return history.length ? `<button type="button" class="link-btn" id="btn-back">&larr; Back</button>` : '';
 }
 
-function renderStep(){
-  clearControls();
+function commit(id, value){
+  answers[id] = value;
+  history.push(id);
+  render();
+  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+}
+
+function goBack(){
+  const id = history.pop();
+  delete answers[id];
+  // Answers to later questions may no longer apply, so drop any that are now hidden.
+  history = history.filter(h=>{ const q = QUESTIONS.find(x=>x.id===h); return !q.show || q.show(answers); });
+  render();
+}
+
+function wirePills(cont, onPick){
+  cont.querySelectorAll('.pill').forEach(btn=>{
+    btn.onclick = ()=>{
+      cont.querySelectorAll('.pill').forEach(b=>{ b.classList.remove('selected'); b.setAttribute('aria-pressed','false'); });
+      btn.classList.add('selected');
+      btn.setAttribute('aria-pressed','true');
+      onPick(btn.dataset.v);
+    };
+  });
+}
+
+function renderControls(q){
   const ctrl = document.getElementById('controls');
 
-  if(step===0){
-    addMsg("Hi, I'm the SCHO Coverage Navigator. I'll ask a few quick questions and estimate what kind of health coverage you may qualify for &mdash; Medicaid/Medi-Cal, a subsidized Marketplace plan, or full-price coverage.", 'bot');
-    addMsg("First: how many people are in your household (including yourself)?", 'bot');
+  if(q.type==='choice'){
+    ctrl.innerHTML = `<div class="pill-row" role="group">${q.options.map(([v,l])=>`<button type="button" class="pill" data-v="${v}">${l}</button>`).join('')}</div>${backButton()}`;
+    ctrl.querySelectorAll('.pill').forEach(b=>b.onclick = ()=>commit(q.id, b.dataset.v));
+  }
+
+  else if(q.type==='number'){
     ctrl.innerHTML = `
-      <div class="field-row">
-        <input type="number" id="inp-size" min="1" max="15" placeholder="e.g. 3">
-      </div>
-      <button class="next-btn" id="btn-next">Continue</button>`;
+      <label class="q-label" for="inp">${q.label}</label>
+      <div class="field-row"><input type="number" id="inp" min="${q.min}" max="${q.max}" inputmode="numeric" placeholder="${q.placeholder}"></div>
+      <button type="button" class="btn" id="btn-next">Continue</button>${backButton()}`;
+    const inp = document.getElementById('inp');
     document.getElementById('btn-next').onclick = ()=>{
-      const v = parseInt(document.getElementById('inp-size').value);
-      if(!v || v<1){ return; }
-      state.size = v;
-      addMsg(`Household size: ${v}`, 'user');
-      goToStep(1);
+      const v = parseInt(inp.value);
+      if(isNaN(v) || v<q.min || v>q.max){ inp.focus(); return; }
+      commit(q.id, v);
     };
   }
 
-  else if(step===1){
-    addMsg("What's your total annual household income, before taxes? (Include everyone's income &mdash; wages, self-employment, etc.)", 'bot');
+  else if(q.type==='income'){
     ctrl.innerHTML = `
-      <div class="field-row">
-        <input type="number" id="inp-income" min="0" placeholder="e.g. 42000">
+      <label class="q-label" for="inp">Household income ($)</label>
+      <div class="field-row"><input type="number" id="inp" min="0" inputmode="numeric" placeholder="e.g. 42000"></div>
+      <div class="pill-row" id="per">
+        <button type="button" class="pill sm selected" data-v="year" aria-pressed="true">Per year</button>
+        <button type="button" class="pill sm" data-v="month" aria-pressed="false">Per month</button>
       </div>
-      <button class="next-btn" id="btn-next">Continue</button>`;
+      <button type="button" class="btn" id="btn-next">Continue</button>${backButton()}`;
+    const inp = document.getElementById('inp');
+    let per = 'year';
+    wirePills(document.getElementById('per'), v=>{ per = v; inp.placeholder = v==='month' ? 'e.g. 3500' : 'e.g. 42000'; });
     document.getElementById('btn-next').onclick = ()=>{
-      const v = parseInt(document.getElementById('inp-income').value);
-      if(v===null || isNaN(v) || v<0){ return; }
-      state.income = v;
-      addMsg(`Annual household income: $${v.toLocaleString()}`, 'user');
-      goToStep(2);
+      const v = parseInt(inp.value);
+      if(isNaN(v) || v<0){ inp.focus(); return; }
+      answers.incomeEntered = v;
+      answers.incomePer = per;
+      commit('income', per==='month' ? v*12 : v);
     };
   }
 
-  else if(step===2){
-    addMsg("Which state do you live in? Medicaid eligibility rules vary by state.", 'bot');
-    const opts = STATES.map(s=>`<option value="${s}">${s}</option>`).join('');
+  else if(q.type==='state'){
     ctrl.innerHTML = `
-      <div class="field-row">
-        <select id="inp-state">${opts}</select>
+      <div class="pill-row" id="pill-ca">
+        <button type="button" class="pill" data-v="CA">Yes, California</button>
+        <button type="button" class="pill" data-v="other" aria-pressed="false">Another state</button>
       </div>
-      <button class="next-btn" id="btn-next">Continue</button>`;
-    document.getElementById('btn-next').onclick = ()=>{
-      state.stateCode = document.getElementById('inp-state').value;
-      addMsg(`State: ${state.stateCode}`, 'user');
-      goToStep(3);
-    };
+      <div id="other-state" hidden>
+        <label class="q-label" for="inp-state" style="margin-top:18px">Which state?</label>
+        <div class="field-row"><select id="inp-state">${OTHER_STATES.map(s=>`<option value="${s}">${s}</option>`).join('')}</select></div>
+        <button type="button" class="btn" id="btn-next">Continue</button>
+      </div>${backButton()}`;
+    ctrl.querySelector('[data-v="CA"]').onclick = ()=>commit('state','CA');
+    const other = ctrl.querySelector('[data-v="other"]');
+    other.onclick = ()=>{ other.classList.add('selected'); other.setAttribute('aria-pressed','true'); document.getElementById('other-state').hidden = false; };
+    document.getElementById('btn-next').onclick = ()=>commit('state', document.getElementById('inp-state').value);
   }
 
-  else if(step===3){
-    addMsg("A few quick health questions &mdash; is anyone in the household pregnant?", 'bot');
-    ctrl.innerHTML = `
-      <div class="pill-row" id="pill-pregnant">
-        <button class="pill" data-v="yes">Yes</button>
-        <button class="pill" data-v="no">No</button>
-      </div>
-      <div style="margin-top:14px;font-size:14.5px;color:var(--ivory-dim)" id="q-age-label"></div>
-      <div class="field-row" style="margin-top:6px;">
-        <input type="number" id="inp-age" min="0" max="120" placeholder="Your age">
-      </div>
-      <div class="pill-row" style="margin-top:14px;" id="pill-tobacco">
-        <span style="width:100%;font-size:14.5px;color:var(--ivory-dim);margin-bottom:4px;">Does anyone use tobacco regularly?</span>
-        <button class="pill" data-v="yes">Yes</button>
-        <button class="pill" data-v="no">No</button>
-      </div>
-      <button class="next-btn" id="btn-next" disabled>Continue</button>`;
-
-    function wirePills(containerId, key){
-      const cont = document.getElementById(containerId);
-      cont.querySelectorAll('.pill').forEach(btn=>{
-        btn.onclick = ()=>{
-          cont.querySelectorAll('.pill').forEach(b=>b.classList.remove('selected'));
-          btn.classList.add('selected');
-          state[key] = btn.dataset.v;
-          checkReady();
-        };
-      });
-    }
-    wirePills('pill-pregnant','pregnant');
-    wirePills('pill-tobacco','tobacco');
-
-    function checkReady(){
-      const age = parseInt(document.getElementById('inp-age').value);
-      const ready = state.pregnant && state.tobacco && age>=0 && !isNaN(age);
-      document.getElementById('btn-next').disabled = !ready;
-    }
-    document.getElementById('inp-age').addEventListener('input', checkReady);
-
-    document.getElementById('btn-next').onclick = ()=>{
-      state.age = parseInt(document.getElementById('inp-age').value);
-      addMsg(`Pregnant: ${state.pregnant} &middot; Tobacco use: ${state.tobacco} &middot; Age: ${state.age}`, 'user');
-      goToStep(4);
-    };
-  }
-
-  else if(step===4){
-    renderResult();
+  const back = document.getElementById('btn-back');
+  if(back) back.onclick = goBack;
+  const inp = document.getElementById('inp');
+  if(inp){
+    inp.focus({ preventScroll:true });
+    inp.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); document.getElementById('btn-next').click(); } });
   }
 }
 
-function renderResult(){
-  const fpl26 = fplGuideline(FPL_2026, state.size);
-  const fpl25 = fplGuideline(FPL_2025, state.size);
-  const pct26 = (state.income / fpl26) * 100;
-  const pct25 = (state.income / fpl25) * 100;
-  const isExpansion = !NON_EXPANSION.includes(state.stateCode);
+/* ===== Matching: checked in order, first match wins ===== */
+function enrollmentTiming(a){
+  const ca = isCA(a);
+  if(a.change==='lost' || a.change==='other'){
+    return "Because of your recent change, you can likely sign up now with a <b>Special Enrollment Period</b>. You have 60 days from the change, so don't wait.";
+  }
+  if(!ca){
+    return "Open enrollment on HealthCare.gov usually runs <b>November 1 &ndash; January 15</b> (some states run longer). Outside that window, you need a qualifying life event like losing coverage, moving, getting married, or having a baby.";
+  }
+  const m = new Date().getMonth();  // 0 = January
+  if(m===10 || m===11) return "Open enrollment is happening now, <b>November 1 &ndash; January 31</b>. Sign up by <b>December 31</b> for coverage that starts January 1.";
+  if(m===0) return "Open enrollment is open until <b>January 31</b>. If you sign up this month, coverage starts February 1.";
+  return "Open enrollment runs <b>November 1 &ndash; January 31</b>. Until then, you can only sign up if you have a qualifying life event, like losing coverage, moving, getting married, or having a baby.";
+}
 
-  let title, body, cta, tone;
+const TIER_PICKER = `
+  <p>How often do you expect to use health care?</p>
+  <div class="pill-row" id="pill-usage">
+    <button type="button" class="pill" data-v="rare" aria-pressed="false">Rarely</button>
+    <button type="button" class="pill" data-v="regular" aria-pressed="false">Regular visits or prescriptions</button>
+    <button type="button" class="pill" data-v="ongoing" aria-pressed="false">An ongoing health condition</button>
+  </div>
+  <p id="tier-rec" style="margin-top:12px;" aria-live="polite"></p>`;
+const TIER_TEXT = {
+  rare: "A <b>Bronze</b> plan usually fits best &mdash; lowest monthly premium, but a high deductible, so it mainly protects you from a big medical bill.",
+  regular: "A <b>Silver</b> plan is a good middle ground &mdash; a moderate premium with lower costs when you see a doctor or fill a prescription.",
+  ongoing: "A <b>Gold</b> plan usually fits best &mdash; a higher premium, but low deductibles and copays, so frequent care costs less over the year."
+};
 
-  if(state.age >= 65){
-    title = "Check Medicare first";
-    tone = 'sage';
-    body = `<p>At age ${state.age}, you're likely eligible for <b>Medicare</b> rather than Medicaid or a Marketplace plan. Medicare has its own enrollment rules and doesn't depend on income the way these other programs do.</p>
-    <p>If your income is very low, you may also qualify for a Medicare Savings Program or Medicaid alongside Medicare (\"dual eligible\"). A SCHO volunteer can help you sort out which applies.</p>`;
-  }
-  else if(pct26 <= 138 && isExpansion){
-    title = "You likely qualify for Medicaid";
-    tone='sage';
-    body = `<p>Your household income is about <b>${pct26.toFixed(0)}% of the federal poverty level</b>. ${state.stateCode} has expanded Medicaid, so adults up to 138% FPL generally qualify &mdash; often with <b>$0 monthly premium</b>.</p>
-    ${state.stateCode==='CA' ? '<p>In California this program is called <b>Medi-Cal</b>. You can apply through Covered California or your county social services office.</p>' : '<p>Apply through your state Medicaid agency or healthcare.gov, which will route low-income applicants to Medicaid automatically.</p>'}
-    ${state.pregnant==='yes' ? '<p>Since someone in your household is pregnant, income limits for pregnancy-related Medicaid are usually much higher than the standard 138% cutoff &mdash; it may be worth applying even if this estimate is close to the line.</p>' : ''}`;
-  }
-  else if(pct26 < 100 && !isExpansion){
-    title = "You may be in the coverage gap";
-    tone='rose';
-    body = `<p>${state.stateCode} has <b>not expanded Medicaid</b>, and your income (about ${pct26.toFixed(0)}% FPL) is below the 100% FPL threshold needed for Marketplace subsidies. This can mean falling into the "coverage gap" &mdash; too low for subsidies, but above your state's very restrictive Medicaid limits.</p>
-    <p>You may still qualify for Medicaid if you're pregnant, disabled, or a parent of a minor &mdash; those limits are usually different. Community health centers (sliding-scale fee clinics) are also worth checking. This is a case where talking to a real person helps a lot.</p>`;
-  }
-  else if(pct25 >= 100 && pct25 <= 400){
-    title = "You likely qualify for a subsidized Marketplace plan";
-    tone='sage';
-    const csrEligible = pct25 <= 250;
-    body = `<p>Your household income is about <b>${pct25.toFixed(0)}% of the federal poverty level</b> (using 2025 guidelines, which set 2026 Marketplace subsidy eligibility). That puts you in range for a <b>premium tax credit</b> through ${state.stateCode==='CA' ? 'Covered California' : 'the Marketplace'}.</p>
-    <p><b>Important for 2026:</b> the enhanced subsidies from 2021&ndash;2025 expired, so the original ACA rules are back in effect &mdash; your required contribution rises on a sliding scale, and the subsidy still phases out completely above 400% FPL.</p>
-    ${csrEligible ? '<p>Because you\'re under 250% FPL, you likely also qualify for <b>Cost-Sharing Reductions</b> &mdash; but only if you pick a <b>Silver</b> plan. This can lower your deductible and copays substantially, so Silver is usually the strongest pick in your case even if a Bronze plan looks cheaper up front.</p>' : '<p>At this income level, Cost-Sharing Reductions aren\'t available, so the choice is more about your own premium vs. deductible tradeoff:</p>'}
-    <div class="pill-row" id="pill-priority" style="margin-top:8px;">
-      <button class="pill" data-v="premium">Lower monthly premium</button>
-      <button class="pill" data-v="deductible">Lower deductible / more predictable costs</button>
-    </div>
-    <p id="tier-rec" style="margin-top:10px;"></p>`;
-  }
-  else {
-    title = "Full-price Marketplace coverage";
-    tone='rose';
-    body = `<p>At about ${pct25.toFixed(0)}% of the federal poverty level, your household is above the 400% FPL cutoff. Since the enhanced subsidies expired at the end of 2025, <b>the subsidy cliff has returned</b> for 2026 &mdash; households above 400% FPL don't receive a premium tax credit at all this year.</p>
-    <p>You can still buy a Marketplace plan, just without a subsidy. It's worth comparing that to any employer coverage available to you, since Marketplace premiums without subsidies rose sharply this year.</p>
-    <div class="pill-row" id="pill-priority" style="margin-top:8px;">
-      <button class="pill" data-v="premium">Lower monthly premium</button>
-      <button class="pill" data-v="deductible">Lower deductible / more predictable costs</button>
-    </div>
-    <p id="tier-rec" style="margin-top:10px;"></p>`;
+function mainMatch(a){
+  const p26 = pct(a, CONFIG.FPL), p25 = p26;
+  const ca = isCA(a);
+  const pctText = `about <b>${p26.toFixed(0)}% of the federal poverty level</b>`;
+  const medicareLowIncome = p26<=CONFIG.MEDI_CAL_ADULT
+    ? `<p>With your income, you may also qualify for a Medicare Savings Program or ${ca?'Medi-Cal':'Medicaid'} alongside Medicare ("dual eligible"), which can cover your premiums and copays.</p>` : '';
+
+  if(a.age>=65) return {
+    title:"Check Medicare first",
+    why:`At age ${a.age}, you're likely eligible for <b>Medicare</b>. Medicare has its own enrollment rules and doesn't depend on income the way ${ca?'Medi-Cal and Covered California do':'Medicaid and Marketplace plans do'}.`,
+    cost:"Part A (hospital) is usually free if you or your spouse worked about 10 years. Part B (doctor visits) has a monthly premium.",
+    when:"Your first chance is the 7 months around your 65th birthday. After that, general enrollment runs January 1 &ndash; March 31 each year.",
+    bring:"Your Social Security number, photo ID, and details of any insurance you have now.",
+    apply:CONFIG.LINKS.medicare, extra:medicareLowIncome
+  };
+
+  if(a.ssdi==='2plus') return {
+    title:"You likely qualify for Medicare",
+    why:"People who have received <b>SSDI for 24 months</b> qualify for Medicare, even before age 65.",
+    cost:"Part A (hospital) is usually free. Part B (doctor visits) has a monthly premium.",
+    when:"Enrollment is usually automatic. Your Medicare card should arrive by mail around your 25th month of SSDI.",
+    bring:"Your Social Security number and photo ID.",
+    apply:CONFIG.LINKS.medicare, extra:medicareLowIncome
+  };
+
+  if(ca && a.age<19 && p26<=CONFIG.MEDI_CAL_CHILD) return {
+    title:"You likely qualify for Medi-Cal",
+    why:`Your household income is ${pctText}. In California, people under 19 qualify for Medi-Cal up to ${CONFIG.MEDI_CAL_CHILD}%, regardless of immigration status.`,
+    cost:"Low or no cost.", when:"You can apply any time.", bring:BRING, apply:CONFIG.LINKS.medical
+  };
+
+  if(ca && p26<=CONFIG.MEDI_CAL_ADULT){
+    if(a.immigration==='undoc') return {
+      warn:true,
+      title:"Your options: restricted-scope Medi-Cal and county programs",
+      why:`Your household income is ${pctText}. Starting in January 2026, California paused <b>new</b> enrollment in full-scope Medi-Cal for undocumented adults 19 and older. People who were already enrolled can generally keep it if they renew on time.`,
+      cost:"<b>Restricted-scope Medi-Cal</b> is free and covers emergency and pregnancy-related care.",
+      when:"You can apply any time.", bring:BRING, apply:CONFIG.LINKS.medical,
+      extra:`<ul>
+        <li>If you already have full-scope Medi-Cal, renew on time every year so you don't lose it.</li>
+        <li>Community health centers offer care on a sliding fee scale, regardless of immigration status.</li>
+      </ul>`
+    };
+    return {
+      title:"You likely qualify for Medi-Cal",
+      why:`Your household income is ${pctText}. California has expanded Medi-Cal, so adults up to ${CONFIG.MEDI_CAL_ADULT}% generally qualify.`,
+      cost:"Usually <b>$0 a month</b>.",
+      when:"You can apply any time &mdash; you don't need to wait for open enrollment.",
+      bring:BRING, apply:CONFIG.LINKS.medical,
+      extra:`<p>You can also apply through Covered California or your county social services office. If your income goes up later, you may move to a Covered California plan with financial help.</p>
+        ${a.age>=19 && a.age<65 ? `<p><b>New in ${CONFIG.COVERAGE_YEAR}:</b> starting January 1, many adults 19&ndash;64 without children under 13 must show <b>80 hours a month</b> of work, school, volunteering or job training to keep Medi-Cal. People who are pregnant, have a disability or a serious health condition, and some others are exempt. Renewals will also come every 6 months for this group. A SCHO counselor can help you check.</p>` : ''}`
+    };
   }
 
-  document.getElementById('chatLog').style.display='none';
-  const ctrl = document.getElementById('controls');
-  ctrl.style.borderTop='none';
-  ctrl.innerHTML = `
-    <div class="result-card" style="border-color:var(--${tone==='sage'?'sage':'rose'})">
-      <h2>${title}</h2>
-      <div class="result-fpl">Household of ${state.size} &middot; $${state.income.toLocaleString()}/yr &middot; ${state.stateCode}</div>
-      ${body}
-      <div class="disclaimer">This is an educational estimate based on published 2025&ndash;2026 federal poverty guidelines and ACA rules, not an official eligibility determination. Actual results depend on exact income counting rules, state-specific programs, and application details. Please confirm with ${state.stateCode==='CA' ? 'Covered California / Medi-Cal' : 'healthcare.gov or your state Medicaid office'} or a SCHO volunteer.</div>
-      <a class="cta" href="mailto:info@schealthcareoutreach.org?subject=Coverage%20Navigator%20follow-up">Talk to a SCHO volunteer &rarr;</a>
-      <br><button class="restart" id="btn-restart">Start over</button>
-    </div>`;
-
-  const pillWrap = document.getElementById('pill-priority');
-  if(pillWrap){
-    pillWrap.querySelectorAll('.pill').forEach(btn=>{
-      btn.onclick = ()=>{
-        pillWrap.querySelectorAll('.pill').forEach(b=>b.classList.remove('selected'));
-        btn.classList.add('selected');
-        const rec = document.getElementById('tier-rec');
-        if(btn.dataset.v==='premium'){
-          rec.innerHTML = 'With that priority, a <b>Bronze</b> plan usually fits best &mdash; lowest premium, but expect a high deductible, so it suits someone who mostly wants protection from a major medical event.';
-        } else {
-          rec.innerHTML = 'With that priority, a <b>Silver or Gold</b> plan usually fits best &mdash; higher premium, but lower deductible and copays, so routine care costs less throughout the year.';
-        }
-      };
-    });
+  if(!ca){
+    const expansion = !CONFIG.NON_EXPANSION.includes(a.state);
+    if(p26<=CONFIG.MEDI_CAL_ADULT && expansion) return {
+      title:"You likely qualify for Medicaid",
+      why:`Your household income is ${pctText}. ${a.state} has expanded Medicaid, so adults up to ${CONFIG.MEDI_CAL_ADULT}% generally qualify.`,
+      cost:"Often <b>$0 a month</b>.", when:"You can apply any time.", bring:BRING,
+      apply:CONFIG.LINKS.healthcaregov,
+      extra:"<p>Apply through your state Medicaid agency or HealthCare.gov, which sends low-income applicants to Medicaid automatically.</p>"
+    };
+    if(p26<100 && !expansion) return {
+      warn:true,
+      title:"You may be in the coverage gap",
+      why:`${a.state} has <b>not expanded Medicaid</b>, and your income (${pctText}) is below the 100% needed for Marketplace financial help. That can leave you too low for subsidies but above your state's very strict Medicaid limits.`,
+      cost:"Community health centers charge on a sliding scale based on income.",
+      when:"Medicaid applications are accepted any time.", bring:BRING,
+      extra:"<p>You may still qualify for Medicaid if you're pregnant, disabled, or the parent of a minor, since those limits are different. This is a case where talking to a real person helps a lot.</p>"
+    };
   }
-  document.getElementById('btn-restart').onclick = ()=>{
-    Object.keys(state).forEach(k=>state[k]=null);
-    document.getElementById('chatLog').style.display='flex';
-    goToStep(0);
+
+  const market = ca ? 'Covered California' : 'the Marketplace';
+  if(ca && a.immigration==='undoc') return {
+    warn:true,
+    title:"Your options: job-based or private coverage",
+    why:"Covered California is only open to people who are lawfully present, so undocumented residents can't buy plans or get financial help there.",
+    cost:"Plans bought directly from an insurance company are full price. A job's plan is often much cheaper.",
+    when:"Private plans follow the same open enrollment dates as Covered California, November 1 &ndash; January 31.",
+    bring:"Photo ID and proof of income.",
+    extra:"<ul><li>If a job offers health insurance, that is usually your best option.</li><li>Community health centers offer care on a sliding fee scale, regardless of immigration status.</li></ul>"
+  };
+
+  if(a.job==='yes') return {
+    title:"Compare your job's plan first",
+    why:`If the job's plan is <b>affordable</b> and meets basic coverage standards, you usually can't get financial help through ${market}, and the job's plan is usually the better deal.`,
+    cost:"Depends on the employer. HR or the benefits office can tell you what your share costs.",
+    when:`Job plans have their own sign-up period, so ask HR. If you lose job coverage later, you can sign up through ${market} within 60 days.`,
+    bring:"Your employer's plan details and your household income.",
+    extra:`<p>If the job's plan would cost you a large share of your income, you may still qualify for help through ${market}. A SCHO counselor can check the numbers with you.</p>`
+  };
+
+  if(ca && a.immigration==='other' && p25<=CONFIG.SUBSIDY_MAX) return {
+    warn:true,
+    title:"You can buy a Covered California plan, but financial help may not apply",
+    why:`Starting in ${CONFIG.COVERAGE_YEAR}, federal financial help is limited to U.S. citizens, green card holders, and a few other groups (like Cuban and Haitian entrants). Refugees, asylees, TPS holders and many visa holders can still buy a Covered California plan, but usually without financial help.`,
+    cost:"Likely full price, unless your status is one of the groups that still qualifies. A SCHO counselor can check your exact status.",
+    when:enrollmentTiming(a), bring:BRING, apply:CONFIG.LINKS.coveredca,
+    extra:"<p>If you already have a Covered California plan, check your renewal notice carefully, since your financial help may change.</p>"
+  };
+
+  if(p25>=100 && p25<=CONFIG.SUBSIDY_MAX){
+    const csr = p25<=CONFIG.CSR_SILVER;
+    return {
+      title:`You likely qualify for ${ca?'a Covered California plan':'a Marketplace plan'} with financial help`,
+      why:`Your household income is about <b>${p25.toFixed(0)}% of the federal poverty level</b>. That puts you in range for a <b>premium tax credit</b>, which lowers your monthly bill.`,
+      cost:`Depends on the plan and your ZIP code. ${ca?"Covered California's Shop and Compare tool":'HealthCare.gov'} shows your exact prices after financial help.`,
+      when:enrollmentTiming(a), bring:BRING,
+      apply: ca ? CONFIG.LINKS.coveredca : CONFIG.LINKS.healthcaregov,
+      extra:`<p><b>Important for ${CONFIG.COVERAGE_YEAR}:</b> the extra financial help from 2021&ndash;2025 ended and has not been renewed, so the original ACA rules apply. What you pay rises on a sliding scale, and help stops completely above ${CONFIG.SUBSIDY_MAX}%.</p>
+        ${ca && p25<=CONFIG.CA_STATE_HELP ? `<p>California also adds <b>its own financial help</b> for lower-income households, which can lower your premium even more. Covered California applies it automatically.</p>` : ''}
+        ${csr ? `<p>Because you're under ${CONFIG.CSR_SILVER}%, you likely also qualify for <b>Cost-Sharing Reductions</b>, but only on a <b>Silver</b> plan. They lower your deductible and copays a lot, so Silver is usually your best pick even if Bronze looks cheaper.</p>` : TIER_PICKER}`
+    };
+  }
+
+  return {
+    warn:true,
+    title:`Full-price ${ca?'Covered California':'Marketplace'} coverage`,
+    why:`At about ${p25.toFixed(0)}% of the federal poverty level, your household is above the ${CONFIG.SUBSIDY_MAX}% cutoff. Since the extra financial help ended after 2025, households above ${CONFIG.SUBSIDY_MAX}% don't get a premium tax credit in ${CONFIG.COVERAGE_YEAR}.`,
+    cost:`Full price. Premiums are expected to rise again for ${CONFIG.COVERAGE_YEAR}, so compare with any job-based coverage you can get.`,
+    when:enrollmentTiming(a), bring:"Photo ID and proof of your address.",
+    apply: ca ? CONFIG.LINKS.coveredca : CONFIG.LINKS.healthcaregov,
+    extra:TIER_PICKER
   };
 }
 
-renderTrail();
-renderStep();
+// Extra results for other people in the household, and other things worth knowing.
+function householdNotes(a, main){
+  const p26 = pct(a, CONFIG.FPL);
+  const ca = isCA(a);
+  const forHousehold = [], worthKnowing = [];
+
+  if(a.kids==='yes' && !(a.age<19 && main.title.includes('Medi-Cal'))){
+    if(!ca) forHousehold.push("<b>Children:</b> kids often qualify for Medicaid or CHIP at higher incomes than adults. Check with your state's Medicaid office.");
+    else if(p26<=CONFIG.MEDI_CAL_CHILD) forHousehold.push(`<b>Children under 19</b> likely qualify for <b>Medi-Cal</b> at this income (up to ${CONFIG.MEDI_CAL_CHILD}%), regardless of immigration status. You can apply for them any time.`);
+    else forHousehold.push("<b>Children</b> can usually join the same plan as the adults, whether that's a job's plan or a Covered California plan.");
+  }
+
+  if(a.pregnant==='yes'){
+    if(!ca) forHousehold.push("<b>Pregnancy:</b> income limits for pregnancy Medicaid are usually much higher than for other adults, so it's worth applying even if you're over the regular limit.");
+    else if(p26<=CONFIG.MEDI_CAL_PREGNANCY) forHousehold.push("<b>Pregnancy:</b> likely covered by <b>Medi-Cal</b> at no cost, through pregnancy and 12 months after birth. Pregnancy coverage is available regardless of immigration status.");
+    else if(p26<=CONFIG.MCAP) forHousehold.push("<b>Pregnancy:</b> likely covered by the <b>Medi-Cal Access Program (MCAP)</b>, a low-cost program for pregnant people with middle incomes, regardless of immigration status.");
+    else forHousehold.push("<b>Pregnancy:</b> covered by any Covered California or job-based plan. Having a baby also lets you change plans within 60 days.");
+    if(ca) worthKnowing.push("When applying, an unborn baby counts as a member of your household, which can raise your income limits.");
+  }
+
+  if(a.change==='lost') worthKnowing.push(`You may be able to keep your old job plan through <b>COBRA</b>${ca?' or <b>Cal-COBRA</b>':''}, but it usually costs much more than a ${ca?'Covered California':'Marketplace'} plan with financial help.`);
+  if(a.job==='unsure') worthKnowing.push("If a job does offer health insurance, find out what it costs. An affordable job plan can mean you don't get financial help.");
+  if(a.ssdi==='under2') worthKnowing.push(`Medicare starts after 24 months of SSDI. Until then, ${ca?'Medi-Cal':'Medicaid'} for people with disabilities may have different income rules, so ask a SCHO counselor.`);
+  if(a.age>=19 && a.age<26 && !/Medi-Cal|Medicaid|Medicare/.test(main.title)) worthKnowing.push("Under 26? You can usually stay on or join a parent's health plan until you turn 26.");
+  if((a.immigration==='other' || a.immigration==='skip') && /Medi-Cal|Covered California/.test(main.title)) worthKnowing.push("Federal rules for some immigrants are changing in 2026 and 2027, for both Medi-Cal and Covered California. A SCHO counselor can check how they apply to your status.");
+  if(a.usc==='yes') worthKnowing.push("As a USC student, you're enrolled in the <b>Student Health Insurance Plan (SHIP)</b> unless you waive it. If you qualify for the coverage above, talk to a SCHO counselor about whether to keep SHIP or waive it.");
+
+  return { forHousehold, worthKnowing };
+}
+
+function renderResult(a){
+  const m = mainMatch(a);
+  const { forHousehold, worthKnowing } = householdNotes(a, m);
+  const ca = isCA(a);
+  const where = ca ? 'California' : a.state;
+  const list = items => `<ul>${items.map(i=>`<li>${i}</li>`).join('')}</ul>`;
+
+  const result = document.createElement('section');
+  result.className = 'result' + (m.warn ? ' warn' : '');
+  result.innerHTML = `
+    <span class="result-eyebrow">Your best match</span>
+    <h2>${m.title}</h2>
+    <div class="result-fpl">Household of ${a.size} &middot; $${a.income.toLocaleString()}/yr &middot; ${where}</div>
+    <dl class="facts">
+      <div><dt>Why</dt><dd>${m.why}</dd></div>
+      <div><dt>Cost</dt><dd>${m.cost}</dd></div>
+      <div><dt>When to sign up</dt><dd>${m.when}</dd></div>
+      <div><dt>What to bring</dt><dd>${m.bring}</dd></div>
+    </dl>
+    ${m.extra ? `<div class="extra">${m.extra}</div>` : ''}
+    ${forHousehold.length ? `<h3>For others in your household</h3>${list(forHousehold)}` : ''}
+    ${worthKnowing.length ? `<h3>Also worth knowing</h3>${list(worthKnowing)}` : ''}
+    <p class="disclaimer">This is an educational estimate based on the ${CONFIG.FPL_YEAR} federal poverty guidelines and the rules for ${CONFIG.COVERAGE_YEAR} coverage, not an official eligibility decision. The final decision comes from ${ca ? 'Medi-Cal or Covered California' : 'your state Medicaid office or HealthCare.gov'}. SCHO's Certified Enrollment Counselors can help you apply for free.</p>
+    <div class="result-actions">
+      <a class="btn" href="${CONFIG.SCHO_HELP}">Get free help from SCHO</a>
+      ${m.apply ? `<a class="btn outline" href="${m.apply.url}" target="_blank" rel="noopener noreferrer">${m.apply.label} &nearr;</a>` : ''}
+    </div>
+    <div class="result-links">
+      <button type="button" class="link-btn" id="btn-back">&larr; Change my last answer</button>
+      <button type="button" class="link-btn" id="btn-restart">Start over</button>
+    </div>`;
+
+  const usage = result.querySelector('#pill-usage');
+  if(usage) wirePills(usage, v=>{ result.querySelector('#tier-rec').innerHTML = TIER_TEXT[v]; });
+  result.querySelector('#btn-back').onclick = goBack;
+  result.querySelector('#btn-restart').onclick = ()=>{
+    Object.keys(answers).forEach(k=>delete answers[k]);
+    history = [];
+    render();
+    window.scrollTo(0, 0);
+  };
+  return result;
+}
+
+render();
 </script>
 </body>
 </html>
